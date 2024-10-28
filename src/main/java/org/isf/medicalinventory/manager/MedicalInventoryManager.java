@@ -23,7 +23,6 @@ package org.isf.medicalinventory.manager;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -403,9 +402,7 @@ public class MedicalInventoryManager {
 		// prepare movements
 		List<Movement> chargeMovements = new ArrayList<>();
 		List<Movement> dischargeMovements = new ArrayList<>();
-		for (Iterator<MedicalInventoryRow> iterator = inventoryRowSearchList.iterator(); iterator.hasNext();) {
-			MedicalInventoryRow medicalInventoryRow = (MedicalInventoryRow) iterator.next();
-
+		for (MedicalInventoryRow medicalInventoryRow: inventoryRowSearchList) {
 			double theoQty = medicalInventoryRow.getTheoreticQty();
 			double realQty = medicalInventoryRow.getRealQty();
 			Double ajustQty = realQty - theoQty;
