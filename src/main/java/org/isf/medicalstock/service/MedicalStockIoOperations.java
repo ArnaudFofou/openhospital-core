@@ -338,7 +338,7 @@ public class MedicalStockIoOperations {
 	 */
 	// TODO: verify why lotCode and medical params are needed
 	public Lot storeLot(String lotCode, Lot lot, Medical medical) throws OHServiceException {
-		if (lotCode == null || lotCode.equals("")) {
+		if (lotCode == null || lotCode.isEmpty()) {
 			lotCode = this.generateLotCode();
 			if (!isAutomaticLotInMode()) {
 				LOGGER.warn("AUTOMATICLOT_IN mode set to 'false' but lot code not provided. Generating... {}.", lotCode);
