@@ -415,7 +415,7 @@ public class MedicalInventoryManager {
 				Movement movement = new Movement(medical, chargeType, null, currentLot, now, ajustQty.intValue(), supplier, chargeReferenceNumber);
 				chargeMovements.add(movement);
 			} else if (ajustQty < 0) { // discharge movement when realQty < theoQty
-				Movement movement = new Movement(medical, dischargeType, ward, currentLot, now, -(ajustQty.intValue()), null, dischargeReferenceNumber);
+				Movement movement = new Movement(medical, dischargeType, ward, currentLot, now, -ajustQty.intValue(), null, dischargeReferenceNumber);
 				dischargeMovements.add(movement);
 			} // else ajustQty = 0, continue
 		}
