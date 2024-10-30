@@ -384,14 +384,14 @@ public class MedicalInventoryManager {
 	 */
 	@Transactional(rollbackFor = OHServiceException.class)
 	public List<Movement> confirmMedicalInventoryRow(MedicalInventory inventory, List<MedicalInventoryRow> inventoryRowSearchList) throws OHServiceException {
-		//check if invenotry exist
+		// check if inventory exist
 		int id = inventory.getId();
 		inventory = this.getInventoryById(id);
 		// validate the inventory
 		this.validateMedicalInventoryRow(inventory, inventoryRowSearchList);
 		// get general info
 		String referenceNumber = inventory.getInventoryReference();
-		// TODO: make possibility to allow charges and discharges with same referenceNumber
+		// TODO: to explore the possibility to allow charges and discharges with same referenceNumber
 		String chargeReferenceNumber = referenceNumber + "-charge";
 		String dischargeReferenceNumber = referenceNumber + "-discharge";
 		MovementType chargeType = medicalDsrStockMovementTypeBrowserManager.getMovementType(inventory.getChargeType());
