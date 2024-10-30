@@ -391,7 +391,7 @@ public class MedicalInventoryManager {
 		this.validateMedicalInventoryRow(inventory, inventoryRowSearchList);
 		// get general info
 		String referenceNumber = inventory.getInventoryReference();
-		// TODO: make possibility to allow charges and discharges with same referenceNumber
+		// TODO: to explore the possibility to allow charges and discharges with same referenceNumber
 		String chargeReferenceNumber = referenceNumber + "-charge";
 		String dischargeReferenceNumber = referenceNumber + "-discharge";
 		MovementType chargeType = medicalDsrStockMovementTypeBrowserManager.getMovementType(inventory.getChargeType());
