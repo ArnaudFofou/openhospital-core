@@ -229,7 +229,7 @@ public class MedicalInventoryManager {
 		} else {
 			boolean exist = movStockInsertingManager.refNoExists(reference);
 			MedicalInventory inventory = this.getInventoryByReference(reference);
-			if (exist || inventory.getId() != medInventory.getId()) {
+			if (exist || (inventory != null && inventory.getId() != medInventory.getId())) {
 				errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.referencealreadyused.msg")));
 			}
 		}
