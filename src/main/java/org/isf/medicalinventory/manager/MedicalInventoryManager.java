@@ -229,10 +229,10 @@ public class MedicalInventoryManager {
 		} else {
 			String chargeReferenceNumber = reference + "-charge";
 			String dischargeReferenceNumber = reference + "-discharge";
-			boolean existWithSufixCharge = movStockInsertingManager.refNoExists(chargeReferenceNumber);
-			boolean existWithSufixDischarge = movStockInsertingManager.refNoExists(dischargeReferenceNumber);
+			boolean existWithSuffixeCharge = movStockInsertingManager.refNoExists(chargeReferenceNumber);
+			boolean existWithSuffixeDischarge = movStockInsertingManager.refNoExists(dischargeReferenceNumber);
 			MedicalInventory inventory = this.getInventoryByReference(reference);
-			if (existWithSufixCharge || existWithSufixDischarge || (inventory != null && inventory.getId() != medInventory.getId())) {
+			if (existWithSuffixeCharge || existWithSuffixeDischarge || (inventory != null && inventory.getId() != medInventory.getId())) {
 				errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.referencealreadyused.msg")));
 			}
 		}
