@@ -384,7 +384,7 @@ public class MedicalInventoryManager {
 	 */
 	@Transactional(rollbackFor = OHServiceException.class)
 	public List<Movement> confirmMedicalInventoryRow(MedicalInventory inventory, List<MedicalInventoryRow> inventoryRowSearchList) throws OHServiceException {
-		//check if invenotry exist
+		// check if inventory exist
 		int id = inventory.getId();
 		inventory = this.getInventoryById(id);
 		// validate the inventory
