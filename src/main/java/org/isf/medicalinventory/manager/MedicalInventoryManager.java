@@ -212,9 +212,9 @@ public class MedicalInventoryManager {
 	 * Verify if the object is valid for CRUD and return a list of errors, if any.
 	 *
 	 * @param medInventory
-	 * @throws OHDataValidationException
+	 * @throws OHDataValidationException, OHServiceException
 	 */
-	private void validateMedicalInventory(MedicalInventory medInventory) throws OHDataValidationException {
+	private void validateMedicalInventory(MedicalInventory medInventory) throws OHDataValidationException, OHServiceException {
 		List<OHExceptionMessage> errors = new ArrayList<>();
 		LocalDateTime tomorrow = LocalDateTime.now().plusDays(1);
 		String reference = medInventory.getInventoryReference();
@@ -226,6 +226,12 @@ public class MedicalInventoryManager {
 		}
 		if (reference == null || reference.equals("")) {
 			errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.mustenterareference.msg")));
+		} else {
+			boolean exist = movStockInsertingManager.refNoExists(reference);
+			MedicalInventory inventory = this.getInventoryByReference(reference);
+			if (exist || inventory != null) {
+				errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.referencealreadyused.msg")));
+			}
 		}
 		if (!errors.isEmpty()) {
 			throw new OHDataValidationException(errors);
