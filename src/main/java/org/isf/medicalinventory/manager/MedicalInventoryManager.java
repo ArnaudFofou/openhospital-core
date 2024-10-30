@@ -227,9 +227,12 @@ public class MedicalInventoryManager {
 		if (reference == null || reference.equals("")) {
 			errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.mustenterareference.msg")));
 		} else {
-			boolean exist = movStockInsertingManager.refNoExists(reference);
+			String chargeReferenceNumber = reference + "-charge";
+			String dischargeReferenceNumber = reference + "-discharge";
+			boolean existWithSufixCharge = movStockInsertingManager.refNoExists(chargeReferenceNumber);
+			boolean existWithSufixDischarge = movStockInsertingManager.refNoExists(dischargeReferenceNumber);
 			MedicalInventory inventory = this.getInventoryByReference(reference);
-			if (exist || (inventory != null && inventory.getId() != medInventory.getId())) {
+			if (existWithSufixCharge || existWithSufixDischarge || (inventory != null && inventory.getId() != medInventory.getId())) {
 				errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.referencealreadyused.msg")));
 			}
 		}
