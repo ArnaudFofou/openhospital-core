@@ -92,19 +92,7 @@ public class MedicalInventoryManager {
 	 */
 	public MedicalInventory newMedicalInventory(MedicalInventory medicalInventory) throws OHServiceException {
 		validateMedicalInventory(medicalInventory);
-		List<OHExceptionMessage> errors = new ArrayList<>();
-		String reference = medicalInventory.getInventoryReference();
-		String chargeReferenceNumber = reference + "-charge";
-		String dischargeReferenceNumber = reference + "-discharge";
-		boolean existWithSuffixCharge = movStockInsertingManager.refNoExists(chargeReferenceNumber);
-		boolean existWithSuffixDischarge = movStockInsertingManager.refNoExists(dischargeReferenceNumber);
-		MedicalInventory inventory = this.getInventoryByReference(reference);
-		if (existWithSuffixCharge || existWithSuffixDischarge || (inventory != null && inventory.getId() != medicalInventory.getId())) {
-			errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.referencealreadyused.msg")));
-		}
-		if (!errors.isEmpty()) {
-			throw new OHServiceException(errors);
-		}
+		checkReference(medicalInventory);
 		return ioOperations.newMedicalInventory(medicalInventory);
 	}
 
@@ -118,19 +106,7 @@ public class MedicalInventoryManager {
 	public MedicalInventory updateMedicalInventory(MedicalInventory medicalInventory, boolean checkReference) throws OHServiceException {
 		validateMedicalInventory(medicalInventory);
 		if (checkReference) {
-			List<OHExceptionMessage> errors = new ArrayList<>();
-			String reference = medicalInventory.getInventoryReference();
-			String chargeReferenceNumber = reference + "-charge";
-			String dischargeReferenceNumber = reference + "-discharge";
-			boolean existWithSuffixCharge = movStockInsertingManager.refNoExists(chargeReferenceNumber);
-			boolean existWithSuffixDischarge = movStockInsertingManager.refNoExists(dischargeReferenceNumber);
-			MedicalInventory inventory = this.getInventoryByReference(reference);
-			if (existWithSuffixCharge || existWithSuffixDischarge || (inventory != null && inventory.getId() != medicalInventory.getId())) {
-				errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.referencealreadyused.msg")));
-			}
-			if (!errors.isEmpty()) {
-				throw new OHServiceException(errors);
-			}
+			checkReference(medicalInventory);
 		}
 		return ioOperations.updateMedicalInventory(medicalInventory);
 	}
@@ -458,5 +434,21 @@ public class MedicalInventoryManager {
 		inventory.setStatus(status);
 		this.updateMedicalInventory(inventory, false);
 		return insertedMovements;
+	}
+	
+	private void checkReference(MedicalInventory medicalInventory) throws OHServiceException {
+		List<OHExceptionMessage> errors = new ArrayList<>();
+		String reference = medicalInventory.getInventoryReference();
+		String chargeReferenceNumber = reference + "-charge";
+		String dischargeReferenceNumber = reference + "-discharge";
+		boolean existWithSuffixCharge = movStockInsertingManager.refNoExists(chargeReferenceNumber);
+		boolean existWithSuffixDischarge = movStockInsertingManager.refNoExists(dischargeReferenceNumber);
+		MedicalInventory inventory = this.getInventoryByReference(reference);
+		if (existWithSuffixCharge || existWithSuffixDischarge || (inventory != null && inventory.getId() != medicalInventory.getId())) {
+			errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.referencealreadyused.msg")));
+		}
+		if (!errors.isEmpty()) {
+			throw new OHServiceException(errors);
+		}
 	}
 }
