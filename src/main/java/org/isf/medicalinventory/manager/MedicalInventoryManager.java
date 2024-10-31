@@ -89,7 +89,7 @@ public class MedicalInventoryManager {
 	 * @throws OHServiceException
 	 */
 	public MedicalInventory newMedicalInventory(MedicalInventory medicalInventory) throws OHServiceException {
-		validateMedicalInventory(medicalInventory);
+		validateMedicalInventory(medicalInventory, true);
 		return ioOperations.newMedicalInventory(medicalInventory);
 	}
 
@@ -101,7 +101,11 @@ public class MedicalInventoryManager {
 	 * @throws OHServiceException
 	 */
 	public MedicalInventory updateMedicalInventory(MedicalInventory medicalInventory) throws OHServiceException {
-		validateMedicalInventory(medicalInventory);
+		if (medicalInventory.getStatus().equals(InventoryStatus.done.toString())) {
+			validateMedicalInventory(medicalInventory, false);
+		} else {
+			validateMedicalInventory(medicalInventory, true);
+		}
 		return ioOperations.updateMedicalInventory(medicalInventory);
 	}
 
@@ -214,7 +218,7 @@ public class MedicalInventoryManager {
 	 * @param medInventory
 	 * @throws OHDataValidationException, OHServiceException
 	 */
-	private void validateMedicalInventory(MedicalInventory medInventory) throws OHDataValidationException, OHServiceException {
+	private void validateMedicalInventory(MedicalInventory medInventory, boolean checkReference) throws OHDataValidationException, OHServiceException {
 		List<OHExceptionMessage> errors = new ArrayList<>();
 		LocalDateTime tomorrow = LocalDateTime.now().plusDays(1);
 		String reference = medInventory.getInventoryReference();
@@ -227,14 +231,17 @@ public class MedicalInventoryManager {
 		if (reference == null || reference.equals("")) {
 			errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.mustenterareference.msg")));
 		} else {
-			String chargeReferenceNumber = reference + "-charge";
-			String dischargeReferenceNumber = reference + "-discharge";
-			boolean existWithSuffixCharge = movStockInsertingManager.refNoExists(chargeReferenceNumber);
-			boolean existWithSuffixDischarge = movStockInsertingManager.refNoExists(dischargeReferenceNumber);
-			MedicalInventory inventory = this.getInventoryByReference(reference);
-			if (existWithSuffixCharge || existWithSuffixDischarge || (inventory != null && inventory.getId() != medInventory.getId())) {
-				errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.referencealreadyused.msg")));
+			if (checkReference) {
+				String chargeReferenceNumber = reference + "-charge";
+				String dischargeReferenceNumber = reference + "-discharge";
+				boolean existWithSuffixCharge = movStockInsertingManager.refNoExists(chargeReferenceNumber);
+				boolean existWithSuffixDischarge = movStockInsertingManager.refNoExists(dischargeReferenceNumber);
+				MedicalInventory inventory = this.getInventoryByReference(reference);
+				if (existWithSuffixCharge || existWithSuffixDischarge || (inventory != null && inventory.getId() != medInventory.getId())) {
+					errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.referencealreadyused.msg")));
+				}
 			}
+			
 		}
 		if (!errors.isEmpty()) {
 			throw new OHDataValidationException(errors);
