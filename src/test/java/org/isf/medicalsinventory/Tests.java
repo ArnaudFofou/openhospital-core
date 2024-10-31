@@ -261,7 +261,7 @@ class Tests extends OHCoreTestCase {
 		assertThat(foundMedicalInventory).isNotNull();
 		String status = "canceled";
 		foundMedicalInventory.setStatus(status);
-		MedicalInventory updatedMedicalInventory = medicalInventoryManager.updateMedicalInventory(foundMedicalInventory);
+		MedicalInventory updatedMedicalInventory = medicalInventoryManager.updateMedicalInventory(foundMedicalInventory, true);
 		assertThat(updatedMedicalInventory.getStatus()).isEqualTo(status);
 	}
 

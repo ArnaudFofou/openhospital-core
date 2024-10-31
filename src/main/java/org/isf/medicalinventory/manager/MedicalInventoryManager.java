@@ -90,6 +90,19 @@ public class MedicalInventoryManager {
 	 */
 	public MedicalInventory newMedicalInventory(MedicalInventory medicalInventory) throws OHServiceException {
 		validateMedicalInventory(medicalInventory);
+		List<OHExceptionMessage> errors = new ArrayList<>();
+		String reference = medicalInventory.getInventoryReference();
+		String chargeReferenceNumber = reference + "-charge";
+		String dischargeReferenceNumber = reference + "-discharge";
+		boolean existWithSuffixCharge = movStockInsertingManager.refNoExists(chargeReferenceNumber);
+		boolean existWithSuffixDischarge = movStockInsertingManager.refNoExists(dischargeReferenceNumber);
+		MedicalInventory inventory = this.getInventoryByReference(reference);
+		if (existWithSuffixCharge || existWithSuffixDischarge || (inventory != null && inventory.getId() != medicalInventory.getId())) {
+			errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.referencealreadyused.msg")));
+		}
+		if (!errors.isEmpty()) {
+			throw new OHServiceException(errors);
+		}
 		return ioOperations.newMedicalInventory(medicalInventory);
 	}
 
@@ -100,8 +113,23 @@ public class MedicalInventoryManager {
 	 * @return the updated {@link MedicalInventory} object.
 	 * @throws OHServiceException
 	 */
-	public MedicalInventory updateMedicalInventory(MedicalInventory medicalInventory) throws OHServiceException {
+	public MedicalInventory updateMedicalInventory(MedicalInventory medicalInventory, boolean checkReference) throws OHServiceException {
 		validateMedicalInventory(medicalInventory);
+		if (checkReference) {
+			List<OHExceptionMessage> errors = new ArrayList<>();
+			String reference = medicalInventory.getInventoryReference();
+			String chargeReferenceNumber = reference + "-charge";
+			String dischargeReferenceNumber = reference + "-discharge";
+			boolean existWithSuffixCharge = movStockInsertingManager.refNoExists(chargeReferenceNumber);
+			boolean existWithSuffixDischarge = movStockInsertingManager.refNoExists(dischargeReferenceNumber);
+			MedicalInventory inventory = this.getInventoryByReference(reference);
+			if (existWithSuffixCharge || existWithSuffixDischarge || (inventory != null && inventory.getId() != medicalInventory.getId())) {
+				errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.referencealreadyused.msg")));
+			}
+			if (!errors.isEmpty()) {
+				throw new OHServiceException(errors);
+			}
+		}
 		return ioOperations.updateMedicalInventory(medicalInventory);
 	}
 
@@ -351,7 +379,7 @@ public class MedicalInventoryManager {
 		}
 		String status = InventoryStatus.validated.toString();
 		inventory.setStatus(status);
-		this.updateMedicalInventory(inventory);
+		this.updateMedicalInventory(inventory, true);
 	}
 
 	/**
@@ -426,7 +454,7 @@ public class MedicalInventoryManager {
 		}
 		String status = InventoryStatus.done.toString();
 		inventory.setStatus(status);
-		this.updateMedicalInventory(inventory);
+		this.updateMedicalInventory(inventory, false);
 		return insertedMovements;
 	}
 }
