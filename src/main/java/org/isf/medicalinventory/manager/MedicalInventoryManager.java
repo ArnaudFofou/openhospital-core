@@ -70,8 +70,10 @@ public class MedicalInventoryManager {
 
 	private WardBrowserManager wardManager;
 
-	public MedicalInventoryManager(MedicalInventoryIoOperation medicalInventoryIoOperation, MedicalInventoryRowManager medicalInventoryRowManager, MedicalDsrStockMovementTypeBrowserManager medicalDsrStockMovementTypeBrowserManager,
-					SupplierBrowserManager supplierManager, MovStockInsertingManager movStockInsertingManager, WardBrowserManager wardManager, MovBrowserManager movBrowserManager) {
+	public MedicalInventoryManager(MedicalInventoryIoOperation medicalInventoryIoOperation, MedicalInventoryRowManager medicalInventoryRowManager,
+					MedicalDsrStockMovementTypeBrowserManager medicalDsrStockMovementTypeBrowserManager,
+					SupplierBrowserManager supplierManager, MovStockInsertingManager movStockInsertingManager, WardBrowserManager wardManager,
+					MovBrowserManager movBrowserManager) {
 		this.ioOperations = medicalInventoryIoOperation;
 		this.medicalInventoryRowManager = medicalInventoryRowManager;
 		this.medicalDsrStockMovementTypeBrowserManager = medicalDsrStockMovementTypeBrowserManager;
@@ -430,7 +432,7 @@ public class MedicalInventoryManager {
 		// prepare movements
 		List<Movement> chargeMovements = new ArrayList<>();
 		List<Movement> dischargeMovements = new ArrayList<>();
-		for (MedicalInventoryRow medicalInventoryRow: inventoryRowSearchList) {
+		for (MedicalInventoryRow medicalInventoryRow : inventoryRowSearchList) {
 			double theoQty = medicalInventoryRow.getTheoreticQty();
 			double realQty = medicalInventoryRow.getRealQty();
 			Double ajustQty = realQty - theoQty;
