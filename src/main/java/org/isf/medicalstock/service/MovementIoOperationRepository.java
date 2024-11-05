@@ -67,5 +67,5 @@ public interface MovementIoOperationRepository extends JpaRepository<Movement, I
 
 	@Query("select count(m) from Movement m where active=1")
 	long countAllActiveMovements();
-
+	
 }

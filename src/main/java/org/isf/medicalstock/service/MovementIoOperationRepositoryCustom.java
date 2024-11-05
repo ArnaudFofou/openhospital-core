@@ -38,5 +38,7 @@ public interface MovementIoOperationRepositoryCustom {
 
 	List<Integer> findMovementForPrint(String medicalDescription, String medicalTypeCode, String wardId,
 			String movType, LocalDateTime movFrom, LocalDateTime movTo, String lotCode, MovementOrder order);
+	
+	List<Integer> findMovementBetween(Integer medicalCode, LocalDateTime movFrom, LocalDateTime movTo);
 
 }

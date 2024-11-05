@@ -22,16 +22,9 @@
 package org.isf.medicalstock.service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Order;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.model.Lot;
@@ -42,6 +35,14 @@ import org.isf.medtype.model.MedicalType;
 import org.isf.utils.time.TimeTools;
 import org.isf.ward.model.Ward;
 import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 @Transactional
 public class MovementIoOperationRepositoryImpl implements MovementIoOperationRepositoryCustom {
@@ -94,6 +95,11 @@ public class MovementIoOperationRepositoryImpl implements MovementIoOperationRep
 					MovementOrder order) {
 		return getMovementForPrint(medicalDescription, medicalTypeCode, wardId, movType, movFrom, movTo,
 						lotCode, order);
+	}
+	
+	@Override
+	public List<Integer> findMovementBetween(Integer medicalCode, LocalDateTime movFrom, LocalDateTime movTo) {
+		return getMovementWhereDatesBetween(medicalCode, movFrom, movTo);
 	}
 
 	private List<Integer> getMovementWhereDatesAndId(String wardId, LocalDateTime dateFrom, LocalDateTime dateTo) {
@@ -224,6 +230,25 @@ public class MovementIoOperationRepositoryImpl implements MovementIoOperationRep
 			orderList.add(builder.asc(root.<MovementType> get(TYPE).<MedicalType> get(DESCRIPTION)));
 			break;
 		}
+		query.where(predicates.toArray(new Predicate[] {})).orderBy(orderList);
+		return entityManager.createQuery(query).getResultList();
+	}
+	
+	private List<Integer> getMovementWhereDatesBetween(Integer medicalCode, LocalDateTime dateFrom, LocalDateTime dateTo) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Integer> query = builder.createQuery(Integer.class);
+		Root<Movement> root = query.from(Movement.class);
+		query.select(root.<Integer> get(CODE));
+		List<Predicate> predicates = new ArrayList<>();
+		if ((dateFrom != null) && (dateTo != null)) {
+			predicates.add(builder.between(root.<LocalDateTime> get(DATE), dateFrom.truncatedTo(ChronoUnit.SECONDS), dateTo.truncatedTo(ChronoUnit.SECONDS)));
+		}
+		if (medicalCode != null) {
+			predicates.add(builder.equal(root.<Medical> get(MEDICAL).<String> get(CODE), medicalCode));
+		}
+		List<Order> orderList = new ArrayList<>();
+		orderList.add(builder.desc(root.get(DATE)));
+		orderList.add(builder.desc(root.get(REF_NO)));
 		query.where(predicates.toArray(new Predicate[] {})).orderBy(orderList);
 		return entityManager.createQuery(query).getResultList();
 	}

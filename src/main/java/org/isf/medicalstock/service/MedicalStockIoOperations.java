@@ -785,5 +785,28 @@ public class MedicalStockIoOperations {
 	public void deleteLot(Lot lot) throws OHServiceException {
 		lotRepository.delete(lot);
 	}
+	
+	/**
+	 * Retrieved all the Movements with params.
+	 *
+	 * @param medicallCode the medical code
+	 * @param dateFrom
+	 * @param dateTo.
+	 * @return the list of retrieved movements.
+	 * @throws OHServiceException
+	 */
+	public List<Movement> getMovementByDatesAndMedical(Integer medicallCode, LocalDateTime dateFrom, LocalDateTime dateTo) throws OHServiceException {
+		List<Movement> pMovement = new ArrayList<>();
+		List<Integer> pMovementCode = movRepository.findMovementBetween(medicallCode, dateFrom, dateTo);
+		for (int i = 0; i < pMovementCode.size(); i++) {
+			Integer code = pMovementCode.get(i);
+			Movement movement = movRepository.findById(code).orElse(null);
+			if (movement == null) {
+				throw new OHServiceException(new OHExceptionMessage("Movement '" + code + "' not found."));
+			}
+			pMovement.add(i, movement);
+		}
+		return pMovement;
+	}
 
 }
