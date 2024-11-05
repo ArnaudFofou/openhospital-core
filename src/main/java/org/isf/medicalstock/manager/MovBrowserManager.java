@@ -223,17 +223,4 @@ public class MovBrowserManager {
 			ioOperations.deleteMovement(lastMovement);
 		}
 	}
-	
-	/**
-	 * Retrieved all the Movements with params.
-	 *
-	 * @param medicallCode the medical code
-	 * @param dateFrom
-	 * @param dateTo.
-	 * @return the list of retrieved movements.
-	 * @throws OHServiceException
-	 */
-	public List<Movement> getMovementsByDateAndMedical(Integer medicalCode, LocalDateTime dateFrom, LocalDateTime dateTo) throws OHServiceException {
-		return ioOperations.getMovementByDatesAndMedical(medicalCode, dateFrom, dateTo);
-	}
 }

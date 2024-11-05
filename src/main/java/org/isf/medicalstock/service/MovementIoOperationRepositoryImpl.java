@@ -95,11 +95,6 @@ public class MovementIoOperationRepositoryImpl implements MovementIoOperationRep
 		return getMovementForPrint(medicalDescription, medicalTypeCode, wardId, movType, movFrom, movTo,
 						lotCode, order);
 	}
-	
-	@Override
-	public List<Integer> findMovementBetween(Integer medicalCode, LocalDateTime movFrom, LocalDateTime movTo) {
-		return getMovementWhereDatesBetween(medicalCode, movFrom, movTo);
-	}
 
 	private List<Integer> getMovementWhereDatesAndId(String wardId, LocalDateTime dateFrom, LocalDateTime dateTo) {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -146,15 +141,13 @@ public class MovementIoOperationRepositoryImpl implements MovementIoOperationRep
 			predicates.add(builder.equal(root.<Medical> get(MEDICAL).<MedicalType> get(TYPE).<String> get(CODE), medicalType));
 		}
 		if ((movFrom != null) && (movTo != null)) {
-			predicates.add(builder.between(root.<LocalDateTime> get(DATE), TimeTools.getBeginningOfDay(movFrom), TimeTools.getBeginningOfNextDay(movTo)));
+			predicates.add(builder.between(root.<LocalDateTime> get(DATE), movFrom, movTo));
 		}
 		if ((lotPrepFrom != null) && (lotPrepTo != null)) {
-			predicates.add(builder.between(root.<Lot> get(LOT).<LocalDateTime> get("preparationDate"), TimeTools.getBeginningOfDay(lotPrepFrom),
-							TimeTools.getBeginningOfNextDay(lotPrepTo)));
+			predicates.add(builder.between(root.<Lot> get(LOT).<LocalDateTime> get("preparationDate"), lotPrepFrom, lotPrepTo));
 		}
 		if ((lotDueFrom != null) && (lotDueTo != null)) {
-			predicates.add(builder.between(root.<Lot> get(LOT).<LocalDateTime> get("dueDate"), TimeTools.getBeginningOfDay(lotDueFrom),
-							TimeTools.getBeginningOfNextDay(lotDueTo)));
+			predicates.add(builder.between(root.<Lot> get(LOT).<LocalDateTime> get("dueDate"), lotDueFrom, lotDueTo));
 		}
 		if ("+".equals(movType)) {
 			predicates.add(builder.equal(root.<MovementType> get(TYPE).<String> get(TYPE), movType));
@@ -229,25 +222,6 @@ public class MovementIoOperationRepositoryImpl implements MovementIoOperationRep
 			orderList.add(builder.asc(root.<MovementType> get(TYPE).<MedicalType> get(DESCRIPTION)));
 			break;
 		}
-		query.where(predicates.toArray(new Predicate[] {})).orderBy(orderList);
-		return entityManager.createQuery(query).getResultList();
-	}
-	
-	private List<Integer> getMovementWhereDatesBetween(Integer medicalCode, LocalDateTime dateFrom, LocalDateTime dateTo) {
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Integer> query = builder.createQuery(Integer.class);
-		Root<Movement> root = query.from(Movement.class);
-		query.select(root.<Integer> get(CODE));
-		List<Predicate> predicates = new ArrayList<>();
-		if ((dateFrom != null) && (dateTo != null)) {
-			predicates.add(builder.between(root.<LocalDateTime> get(DATE), dateFrom.truncatedTo(ChronoUnit.SECONDS), dateTo.truncatedTo(ChronoUnit.SECONDS)));
-		}
-		if (medicalCode != null) {
-			predicates.add(builder.equal(root.<Medical> get(MEDICAL).<String> get(CODE), medicalCode));
-		}
-		List<Order> orderList = new ArrayList<>();
-		orderList.add(builder.desc(root.get(DATE)));
-		orderList.add(builder.desc(root.get(REF_NO)));
 		query.where(predicates.toArray(new Predicate[] {})).orderBy(orderList);
 		return entityManager.createQuery(query).getResultList();
 	}

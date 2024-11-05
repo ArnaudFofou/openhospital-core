@@ -265,11 +265,11 @@ public class MedicalInventoryManager {
 						.collect(Collectors.toList());
 		if (allMedicals) {
 			// Fetch all movements without filtering by medical code
-			movs.addAll(movBrowserManager.getMovementsByDateAndMedical(null, movFrom, movTo));
+			movs.addAll(movBrowserManager.getMovements(null, null, null, null, movFrom, movTo, null, null, null, null));
 		} else {
 			// Fetch only movements concerning inventoryRowSearchList list
 			for (Medical medical : inventoryMedicalsList) {
-				movs.addAll(movBrowserManager.getMovementsByDateAndMedical(medical.getCode(), movFrom, movTo));
+				movs.addAll(movBrowserManager.getMovements(medical.getCode(), null, null, null, movFrom, movTo, null, null, null, null));
 			}
 		}
 
