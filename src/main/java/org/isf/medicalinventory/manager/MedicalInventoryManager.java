@@ -247,7 +247,7 @@ public class MedicalInventoryManager {
 	 */
 	public void validateMedicalInventoryRow(MedicalInventory inventory, List<MedicalInventoryRow> inventoryRowSearchList)
 					throws OHDataValidationException, OHServiceException {
-		LocalDateTime movFrom = inventory.getLastModifiedDate();
+		LocalDateTime movFrom = inventory.getInventoryDate();
 		LocalDateTime movTo = TimeTools.getNow();
 		StringBuilder medDescriptionForLotUpdated = new StringBuilder("\n"); // initial new line
 		StringBuilder medDescriptionForNewLot = new StringBuilder("\n"); // initial new line
