@@ -810,7 +810,7 @@ class Tests extends OHCoreTestCase {
 		int inventoryId = inventory.getId();
 		List<MedicalInventoryRow> medicalInventoryRows = medicalInventoryRowManager.getMedicalInventoryRowByInventoryId(inventoryId);
 		assertThat(medicalInventoryRows).isNotEmpty();
-		assertThat(medicalInventoryRows.size()).isEqualTo(3);
+		assertThat(medicalInventoryRows).hasSize(3);
 		medicalInventoryManager.validateMedicalInventoryRow(inventory, medicalInventoryRows);
 	}
 }
