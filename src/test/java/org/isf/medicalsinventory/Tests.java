@@ -161,13 +161,13 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testMedicalInventoryGets() throws Exception {
-		int code = setupTestMedicalInventory(false);
+		int code = setupTestMedicalInventory();
 		checkMedicalInventoryIntoDb(code);
 	}
 
 	@Test
 	void testMedicalInventoryGetsSets() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory medicalInventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(medicalInventory).isNotNull();
 
@@ -194,7 +194,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testMedicalInventoryRowGetsSets() throws Exception {
-		Integer id = setupTestMedicalInventoryRow(false);
+		Integer id = setupTestMedicalInventoryRow();
 		MedicalInventoryRow medicalInventoryRow = medIvnRowIoOperationRepository.findById(id).orElse(null);
 		assertThat(medicalInventoryRow).isNotNull();
 
@@ -221,7 +221,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testMgrGetMedicalInventory() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory foundMedicalinventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(foundMedicalinventory).isNotNull();
 		List<MedicalInventory> medicalInventories = medicalInventoryManager.getMedicalInventory();
@@ -230,7 +230,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testIoGetMedicalInventory() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory foundMedicalinventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(foundMedicalinventory).isNotNull();
 		List<MedicalInventory> medicalInventories = medicalInventoryIoOperation.getMedicalInventory();
@@ -256,7 +256,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testMgrUpdateMedicalInventory() throws Exception {
-		Integer id = setupTestMedicalInventory(false);
+		Integer id = setupTestMedicalInventory();
 		MedicalInventory foundMedicalInventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(foundMedicalInventory).isNotNull();
 		String status = "canceled";
@@ -267,7 +267,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testIoUpdateMedicalInventory() throws Exception {
-		Integer id = setupTestMedicalInventory(false);
+		Integer id = setupTestMedicalInventory();
 		MedicalInventory foundMedicalInventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(foundMedicalInventory).isNotNull();
 		String status = "canceled";
@@ -278,7 +278,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testDeleteMedicalInventoryWithInventoryRowsWithoutNewLot() throws Exception {
-		Integer id = setupTestMedicalInventory(false);
+		Integer id = setupTestMedicalInventory();
 		MedicalInventory foundMedicalInventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(foundMedicalInventory).isNotNull();
 		MedicalType medicalType = testMedicalType.setup(false);
@@ -297,7 +297,7 @@ class Tests extends OHCoreTestCase {
 	
 	@Test
 	void testDeleteMedicalInventoryWithInventoryRowsWithNewLot() throws Exception {
-		Integer id = setupTestMedicalInventory(false);
+		Integer id = setupTestMedicalInventory();
 		MedicalInventory foundMedicalInventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(foundMedicalInventory).isNotNull();
 		MedicalType medicalType = testMedicalType.setup(false);
@@ -317,7 +317,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testMgrGetMedicalInventoryWithStatus() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory firstMedicalInventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(firstMedicalInventory).isNotNull();
 		Ward ward = testWard.setup(false);
@@ -336,7 +336,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testIoGetMedicalInventoryWithStatus() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory firstMedicalInventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(firstMedicalInventory).isNotNull();
 		Ward ward = testWard.setup(false);
@@ -355,7 +355,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testMgrGetMedicalInventoryWithStatusAndWard() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory firstMedicalInventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(firstMedicalInventory).isNotNull();
 		Ward ward = testWard.setup(false);
@@ -377,7 +377,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testIoGetMedicalInventoryWithStatusAndWard() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory firstMedicalInventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(firstMedicalInventory).isNotNull();
 		Ward ward = testWard.setup(false);
@@ -399,7 +399,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testMgrGetMedicalInventoryByParams() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory firstMedicalInventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(firstMedicalInventory).isNotNull();
 		Ward ward = testWard.setup(false);
@@ -421,7 +421,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testMgrGetMedicalInventoryByParamsNullStatus() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory firstMedicalInventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(firstMedicalInventory).isNotNull();
 		Ward ward = testWard.setup(false);
@@ -445,7 +445,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testMgrGetMedicalInventoryByParamsPageable() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory firstMedicalInventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(firstMedicalInventory).isNotNull();
 		Ward ward = testWard.setup(false);
@@ -468,7 +468,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testMgrGetMedicalInventoryByParamsNullStatusPagable() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory firstMedicalInventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(firstMedicalInventory).isNotNull();
 		Ward ward = testWard.setup(false);
@@ -548,7 +548,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testIoUpdateMedicalInventoryRow() throws Exception {
-		Integer id = setupTestMedicalInventoryRow(false);
+		Integer id = setupTestMedicalInventoryRow();
 		MedicalInventoryRow foundMedicalInventoryRow = medIvnRowIoOperationRepository.findById(id).orElse(null);
 		assertThat(foundMedicalInventoryRow).isNotNull();
 		double realQty = 100.0;
@@ -559,7 +559,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testMgrUpdateMedicalInventoryRow() throws Exception {
-		Integer id = setupTestMedicalInventoryRow(false);
+		Integer id = setupTestMedicalInventoryRow();
 		MedicalInventoryRow foundMedicalInventoryRow = medIvnRowIoOperationRepository.findById(id).orElse(null);
 		assertThat(foundMedicalInventoryRow).isNotNull();
 		double realQty = 100.0;
@@ -589,7 +589,7 @@ class Tests extends OHCoreTestCase {
 		assertThat(medicalInventoryRows).hasSize(1);
 	}
 
-	private int setupTestMedicalInventory(boolean usingSet) throws OHException, OHServiceException {
+	private int setupTestMedicalInventory() throws OHException, OHServiceException {
 		Ward ward = testWard.setup(false);
 		MedicalInventory medicalInventory = testMedicalInventory.setup(ward, false);
 		wardIoOperationRepository.saveAndFlush(ward);
@@ -609,7 +609,7 @@ class Tests extends OHCoreTestCase {
 		testMedicalInventoryRow.check(foundMedicalInventoryRow, foundMedicalInventoryRow.getId());
 	}
 
-	private int setupTestMedicalInventoryRow(boolean usingSet) throws OHServiceException, OHException {
+	private int setupTestMedicalInventoryRow() throws OHServiceException, OHException {
 		Ward ward = testWard.setup(false);
 		wardIoOperationRepository.saveAndFlush(ward);
 		MedicalInventory inventory = testMedicalInventory.setup(ward, false);
@@ -627,7 +627,7 @@ class Tests extends OHCoreTestCase {
 
 	@Test
 	void testDeleteInventory() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory inventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(inventory).isNotNull();
 		inventory.setStatus(InventoryStatus.draft.toString());
@@ -731,7 +731,7 @@ class Tests extends OHCoreTestCase {
 	
 	@Test
 	void testReferenceOfInventoryExist() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory inventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(inventory).isNotNull();
 		String reference = inventory.getInventoryReference();
@@ -741,14 +741,14 @@ class Tests extends OHCoreTestCase {
 	
 	@Test
 	void testGetInventoryByID() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory inventory = medicalInventoryManager.getInventoryById(id);
 		assertThat(inventory).isNotNull();
 	}
 	
 	@Test
 	void testGetInventoryByReference() throws Exception {
-		int id = setupTestMedicalInventory(false);
+		int id = setupTestMedicalInventory();
 		MedicalInventory inventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(inventory).isNotNull();
 		String reference = inventory.getInventoryReference();
@@ -803,8 +803,8 @@ class Tests extends OHCoreTestCase {
 		medicalInventoryRowIoOperationRepository.saveAndFlush(medicalInventoryRowOne);
 		medicalInventoryRowIoOperationRepository.saveAndFlush(medicalInventoryRowTwo);
 		medicalInventoryRowIoOperationRepository.saveAndFlush(medicalInventoryRowThree);
-		firstMovement = medicalStockIoOperation.newMovement(firstMovement);
-		secondMovement = medicalStockIoOperation.newMovement(secondMovement);
+		medicalStockIoOperation.newMovement(firstMovement);
+		medicalStockIoOperation.newMovement(secondMovement);
 		medicalStockIoOperationRepository.saveAndFlush(firstmedicalStock);
 		medicalStockIoOperationRepository.saveAndFlush(secondmedicalStock);
 		int inventoryId = inventory.getId();

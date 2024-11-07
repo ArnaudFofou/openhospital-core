@@ -67,8 +67,14 @@ public class MedicalInventoryRowManager {
 	 * @throws OHServiceException
 	 */
 	public MedicalInventoryRow updateMedicalInventoryRow(MedicalInventoryRow medicalInventoryRow) throws OHServiceException {
-		validateMedicalInventoryRow(medicalInventoryRow);
-		return ioOperation.updateMedicalInventoryRow(medicalInventoryRow);
+		int id = medicalInventoryRow.getId();
+		Optional<MedicalInventoryRow> medInventoryRow = ioOperation.getMedicalInventoryRowById(id);
+		if (medInventoryRow.isPresent()) {
+			medicalInventoryRow.setLock(medInventoryRow.get().getLock());
+			validateMedicalInventoryRow(medicalInventoryRow);
+			return ioOperation.updateMedicalInventoryRow(medicalInventoryRow);
+		}
+		throw new OHServiceException(new OHExceptionMessage("angal.inventoryrow.notfound.msg"));
 	}
 	
 	/**

@@ -105,7 +105,9 @@ public class MedicalInventoryManager {
 	 */
 	public MedicalInventory updateMedicalInventory(MedicalInventory medicalInventory, boolean checkReference) throws OHServiceException {
 		int id = medicalInventory.getId();
-		if (ioOperations.getInventoryById(id) != null) {
+		MedicalInventory inventory = ioOperations.getInventoryById(id);
+		if (inventory != null) {
+			medicalInventory.setLock(inventory.getLock());
 			validateMedicalInventory(medicalInventory);
 			if (checkReference) {
 				checkReference(medicalInventory);
