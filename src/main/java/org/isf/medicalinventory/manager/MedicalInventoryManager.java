@@ -104,11 +104,15 @@ public class MedicalInventoryManager {
 	 * @throws OHServiceException
 	 */
 	public MedicalInventory updateMedicalInventory(MedicalInventory medicalInventory, boolean checkReference) throws OHServiceException {
-		validateMedicalInventory(medicalInventory);
-		if (checkReference) {
-			checkReference(medicalInventory);
+		int id = medicalInventory.getId();
+		if (ioOperations.getInventoryById(id) != null) {
+			validateMedicalInventory(medicalInventory);
+			if (checkReference) {
+				checkReference(medicalInventory);
+			}
+			return ioOperations.updateMedicalInventory(medicalInventory);	
 		}
-		return ioOperations.updateMedicalInventory(medicalInventory);
+		throw new OHServiceException(new OHExceptionMessage("angal.inventory.notfound.msg"));
 	}
 
 	/**
@@ -390,11 +394,11 @@ public class MedicalInventoryManager {
 	 */
 	@Transactional(rollbackFor = OHServiceException.class)
 	public List<Movement> confirmMedicalInventoryRow(MedicalInventory inventory, List<MedicalInventoryRow> inventoryRowSearchList) throws OHServiceException {
-		// check if inventory exist
-		int id = inventory.getId();
-		inventory = this.getInventoryById(id);
 		// validate the inventory
 		this.validateMedicalInventoryRow(inventory, inventoryRowSearchList);
+		// check if inventory exist
+		int id = inventory.getId();
+		inventory = ioOperations.getInventoryById(id);
 		// get general info
 		String referenceNumber = inventory.getInventoryReference();
 		// TODO: to explore the possibility to allow charges and discharges with same referenceNumber
