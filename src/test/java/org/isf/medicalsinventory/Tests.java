@@ -736,7 +736,7 @@ class Tests extends OHCoreTestCase {
 		assertThat(inventory).isNotNull();
 		String reference = inventory.getInventoryReference();
 		boolean exist = medicalInventoryManager.referenceExists(reference);
-		assertThat(exist).isEqualTo(true);
+		assertThat(exist).isTrue();
 	}
 	
 	@Test
