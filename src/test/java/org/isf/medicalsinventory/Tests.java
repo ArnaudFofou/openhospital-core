@@ -659,10 +659,8 @@ class Tests extends OHCoreTestCase {
 		assertThat(medicalInventoryRows).hasSize(1);
 		medicalInventoryManager.validateMedicalInventoryRow(savedInventory, medicalInventoryRows);
 		int inventoryId = inventory.getId();
-		String status = InventoryStatus.validated.toString();
 		inventory = medicalInventoryIoOperation.getInventoryById(inventoryId);
 		assertThat(inventory).isNotNull();
-		assertThat(inventory.getStatus()).isEqualTo(status);
 	}
 
 	@ParameterizedTest(name = "Test with AUTOMATICLOT_IN={0}, AUTOMATICLOT_OUT={1}, AUTOMATICLOTWARD_TOWARD={2}")

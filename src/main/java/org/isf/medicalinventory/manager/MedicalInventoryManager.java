@@ -104,17 +104,11 @@ public class MedicalInventoryManager {
 	 * @throws OHServiceException
 	 */
 	public MedicalInventory updateMedicalInventory(MedicalInventory medicalInventory, boolean checkReference) throws OHServiceException {
-		int id = medicalInventory.getId();
-		MedicalInventory inventory = ioOperations.getInventoryById(id);
-		if (inventory != null) {
-			medicalInventory.setLock(inventory.getLock());
-			validateMedicalInventory(medicalInventory);
-			if (checkReference) {
-				checkReference(medicalInventory);
-			}
-			return ioOperations.updateMedicalInventory(medicalInventory);	
+		validateMedicalInventory(medicalInventory);
+		if (checkReference) {
+			checkReference(medicalInventory);
 		}
-		throw new OHServiceException(new OHExceptionMessage("angal.inventory.notfound.msg"));
+		return ioOperations.updateMedicalInventory(medicalInventory);
 	}
 
 	/**
@@ -249,7 +243,7 @@ public class MedicalInventoryManager {
 	 *
 	 * @param inventory - The {@link MedicalInventory}
 	 * @param inventoryRowSearchList- The list of {@link MedicalInventory}
-	 * @throws OHDataValidationException
+	 * @throws OHDataValidationException, OHServiceException
 	 */
 	public void validateMedicalInventoryRow(MedicalInventory inventory, List<MedicalInventoryRow> inventoryRowSearchList)
 					throws OHDataValidationException, OHServiceException {
@@ -303,26 +297,16 @@ public class MedicalInventoryManager {
 				MedicalInventoryRow medicalInventoryRow = matchingRow.get();
 				double theoQty = medicalInventoryRow.getTheoreticQty();
 				if (mainStoreQty != theoQty) {
-					// Update Lot
-					medicalInventoryRow.setTheoreticQty(mainStoreQty);
-					MedicalInventoryRow updatedRow = medicalInventoryRowManager.updateMedicalInventoryRow(medicalInventoryRow);
-					if (updatedRow != null) {
-						lotUpdated = true;
-						medDescriptionForLotUpdated
-										.append("\n")
-										.append(MessageBundle.formatMessage(
-														"angal.inventory.theoreticalqtyhavebeenupdatedforsomemedical.detail.fmt.msg",
-														medicalDesc, lotInfo, theoQty, mainStoreQty, mainStoreQty - theoQty));
-					}
+					lotUpdated = true;
+					medDescriptionForLotUpdated
+									.append("\n")
+									.append(MessageBundle.formatMessage(
+													"angal.inventory.theoreticalqtyhavebeenupdatedforsomemedical.detail.fmt.msg",
+													medicalDesc, lotInfo, theoQty, mainStoreQty, mainStoreQty - theoQty));
+				
 				}
 			} else {
 				// TODO: to decide if to give control to the user about this
-				double realQty = mainStoreQty;
-				MedicalInventoryRow newMedicalInventoryRow = new MedicalInventoryRow(null, mainStoreQty, realQty, inventory, medical,
-								mov.getLot());
-				medicalInventoryRowManager.newMedicalInventoryRow(newMedicalInventoryRow);
-				inventoryRowSearchList.add(newMedicalInventoryRow);
-
 				if (!inventoryMedicalsList.contains(medical)) {
 					// New medical
 					medicalAdded = true;
@@ -361,9 +345,6 @@ public class MedicalInventoryManager {
 		if (!errors.isEmpty()) {
 			throw new OHDataValidationException(errors);
 		}
-		String status = InventoryStatus.validated.toString();
-		inventory.setStatus(status);
-		this.updateMedicalInventory(inventory, true);
 	}
 
 	/**
@@ -392,15 +373,16 @@ public class MedicalInventoryManager {
 	 *
 	 * @param inventory - The {@link MedicalInventory}
 	 * @param inventoryRowSearchList- The list of {@link MedicalInventory}
+	 * @return List {@link Movement}. It could be {@code empty}.
 	 * @throws OHDataValidationException
 	 */
 	@Transactional(rollbackFor = OHServiceException.class)
 	public List<Movement> confirmMedicalInventoryRow(MedicalInventory inventory, List<MedicalInventoryRow> inventoryRowSearchList) throws OHServiceException {
-		// validate the inventory
-		this.validateMedicalInventoryRow(inventory, inventoryRowSearchList);
 		// check if inventory exist
 		int id = inventory.getId();
-		inventory = ioOperations.getInventoryById(id);
+		inventory = this.getInventoryById(id);
+		// validate the inventory
+		this.validateMedicalInventoryRow(inventory, inventoryRowSearchList);
 		// get general info
 		String referenceNumber = inventory.getInventoryReference();
 		// TODO: to explore the possibility to allow charges and discharges with same referenceNumber
@@ -456,5 +438,71 @@ public class MedicalInventoryManager {
 		if (!errors.isEmpty()) {
 			throw new OHServiceException(errors);
 		}
+	}
+	
+	/**
+	 * Actualise the {@link MedicalInventory}.
+	 *
+	 * @param inventory - The {@link MedicalInventory}
+	 * @return {@link MedicalInventory}. It could be {@code null}.
+	 * @throws OHDataValidationException
+	 */
+	public MedicalInventory actualiseMedicalInventoryRow(MedicalInventory inventory) throws OHServiceException {
+		LocalDateTime movFrom = inventory.getInventoryDate();
+		LocalDateTime movTo = TimeTools.getNow();
+		// Fetch all the inventory row of that inventory
+		int id = inventory.getId();
+		List<MedicalInventoryRow> inventoryRowList = medicalInventoryRowManager.getMedicalInventoryRowByInventoryId(id);
+		// TODO: To decide if to make allMedicals parameter
+		boolean allMedicals = true;
+		List<Movement> movs = new ArrayList<>();
+		List<Medical> inventoryMedicalsList = inventoryRowList.stream()
+						.map(MedicalInventoryRow::getMedical)
+						.distinct()
+						.collect(Collectors.toList());
+		if (allMedicals) {
+			// Fetch all movements without filtering by medical code
+			movs.addAll(movBrowserManager.getMovements(null, null, null, null, movFrom, movTo, null, null, null, null));
+		} else {
+			// Fetch only movements concerning inventoryRowSearchList list
+			for (Medical medical : inventoryMedicalsList) {
+				movs.addAll(movBrowserManager.getMovements(medical.getCode(), null, null, null, movFrom, movTo, null, null, null, null));
+			}
+		}
+
+		// Cycle fetched movements to see if they impact inventoryRowSearchList
+		for (Movement mov : movs) {
+			Lot movLot = mov.getLot();
+			String lotCodeOfMovement = movLot.getCode();
+			Medical medical = mov.getMedical();
+			Integer medicalCode = medical.getCode();
+
+			// Fetch also empty lots because some movements may have discharged them completely
+			Optional<Lot> lot = movStockInsertingManager.getLotByMedical(medical, false).stream().filter(l -> l.getCode().equals(lotCodeOfMovement))
+							.findFirst();
+			double mainStoreQty = lot.get().getMainStoreQuantity();
+
+			// Search for the specific Lot and Medical in inventoryRowSearchList (Lot should be enough)
+			Optional<MedicalInventoryRow> matchingRow = inventoryRowList.stream()
+							.filter(row -> row.getLot().getCode().equals(lotCodeOfMovement) && row.getMedical().getCode().equals(medicalCode))
+							.findFirst();
+
+			if (matchingRow.isPresent()) {
+				MedicalInventoryRow medicalInventoryRow = matchingRow.get();
+				double theoQty = medicalInventoryRow.getTheoreticQty();
+				if (mainStoreQty != theoQty) {
+					// Update Lot
+					medicalInventoryRow.setTheoreticQty(mainStoreQty);
+					medicalInventoryRowManager.updateMedicalInventoryRow(medicalInventoryRow);
+				}
+			} else {
+				// TODO: to decide if to give control to the user about this
+				double realQty = mainStoreQty;
+				MedicalInventoryRow newMedicalInventoryRow = new MedicalInventoryRow(null, mainStoreQty, realQty, inventory, medical,
+								mov.getLot());
+				medicalInventoryRowManager.newMedicalInventoryRow(newMedicalInventoryRow);
+			}
+		}
+		return this.updateMedicalInventory(inventory, true);
 	}
 }
