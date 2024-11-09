@@ -441,13 +441,13 @@ public class MedicalInventoryManager {
 	}
 	
 	/**
-	 * Actualise the {@link MedicalInventory}.
+	 * Actualize the {@link MedicalInventory}.
 	 *
 	 * @param inventory - The {@link MedicalInventory}
 	 * @return {@link MedicalInventory}. It could be {@code null}.
 	 * @throws OHDataValidationException
 	 */
-	public MedicalInventory actualiseMedicalInventoryRow(MedicalInventory inventory) throws OHServiceException {
+	public MedicalInventory actualizeMedicalInventoryRow(MedicalInventory inventory) throws OHServiceException {
 		LocalDateTime movFrom = inventory.getInventoryDate();
 		LocalDateTime movTo = TimeTools.getNow();
 		// Fetch all the inventory row of that inventory
