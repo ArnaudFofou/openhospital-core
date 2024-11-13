@@ -23,8 +23,10 @@ package org.isf.medicalinventory.manager;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.isf.generaldata.GeneralData;
@@ -272,21 +274,25 @@ public class MedicalInventoryManager {
 				movs.addAll(movBrowserManager.getMovements(medical.getCode(), null, null, null, movFrom, movTo, null, null, null, null));
 			}
 		}
-
+		// Get all the lot of the movements
+		List<Lot> lotOfMovements = movs.stream().map(m -> m.getLot()).collect(Collectors.toList());
+		// Remove duplicates by converting the list to a set
+		Set<Lot> uniqueLots = new HashSet<>(lotOfMovements);
+		// Convert the set back to a list
+		List<Lot> uniqueLotList = new ArrayList<>(uniqueLots);
 		// Cycle fetched movements to see if they impact inventoryRowSearchList
-		for (Movement mov : movs) {
-			Lot movLot = mov.getLot();
-			String lotCodeOfMovement = movLot.getCode();
-			String lotExpiringDate = TimeTools.formatDateTime(movLot.getDueDate(), TimeTools.DD_MM_YYYY);
+		for (Lot lot : uniqueLotList) {
+			String lotCodeOfMovement = lot.getCode();
+			String lotExpiringDate = TimeTools.formatDateTime(lot.getDueDate(), TimeTools.DD_MM_YYYY);
 			String lotInfo = GeneralData.AUTOMATICLOT_IN ? lotExpiringDate : lotCodeOfMovement;
-			Medical medical = mov.getMedical();
+			Medical medical = lot.getMedical();
 			String medicalDesc = medical.getDescription();
 			Integer medicalCode = medical.getCode();
 
 			// Fetch also empty lots because some movements may have discharged them completely
-			Optional<Lot> lot = movStockInsertingManager.getLotByMedical(medical, false).stream().filter(l -> l.getCode().equals(lotCodeOfMovement))
+			Optional<Lot> optLot = movStockInsertingManager.getLotByMedical(medical, false).stream().filter(l -> l.getCode().equals(lotCodeOfMovement))
 							.findFirst();
-			double mainStoreQty = lot.get().getMainStoreQuantity();
+			double mainStoreQty = optLot.get().getMainStoreQuantity();
 
 			// Search for the specific Lot and Medical in inventoryRowSearchList (Lot should be enough)
 			Optional<MedicalInventoryRow> matchingRow = inventoryRowSearchList.stream()
@@ -303,7 +309,7 @@ public class MedicalInventoryManager {
 									.append(MessageBundle.formatMessage(
 													"angal.inventory.theoreticalqtyhavebeenupdatedforsomemedical.detail.fmt.msg",
 													medicalDesc, lotInfo, theoQty, mainStoreQty, mainStoreQty - theoQty));
-				
+
 				}
 			} else {
 				// TODO: to decide if to give control to the user about this
@@ -423,7 +429,7 @@ public class MedicalInventoryManager {
 		this.updateMedicalInventory(inventory, false);
 		return insertedMovements;
 	}
-	
+
 	private void checkReference(MedicalInventory medicalInventory) throws OHServiceException {
 		List<OHExceptionMessage> errors = new ArrayList<>();
 		String reference = medicalInventory.getInventoryReference();
@@ -439,7 +445,7 @@ public class MedicalInventoryManager {
 			throw new OHServiceException(errors);
 		}
 	}
-	
+
 	/**
 	 * Actualize the {@link MedicalInventory}.
 	 *
@@ -469,18 +475,21 @@ public class MedicalInventoryManager {
 				movs.addAll(movBrowserManager.getMovements(medical.getCode(), null, null, null, movFrom, movTo, null, null, null, null));
 			}
 		}
-
+		// Get all the lot of the movements
+		List<Lot> lotOfMovements = movs.stream().map(m -> m.getLot()).collect(Collectors.toList());
+		// Remove duplicates by converting the list to a set
+		Set<Lot> uniqueLots = new HashSet<>(lotOfMovements);
+		// Convert the set back to a list
+		List<Lot> uniqueLotList = new ArrayList<>(uniqueLots);
 		// Cycle fetched movements to see if they impact inventoryRowSearchList
-		for (Movement mov : movs) {
-			Lot movLot = mov.getLot();
-			String lotCodeOfMovement = movLot.getCode();
-			Medical medical = mov.getMedical();
+		for (Lot lot : uniqueLotList) {
+			String lotCodeOfMovement = lot.getCode();
+			Medical medical = lot.getMedical();
 			Integer medicalCode = medical.getCode();
-
 			// Fetch also empty lots because some movements may have discharged them completely
-			Optional<Lot> lot = movStockInsertingManager.getLotByMedical(medical, false).stream().filter(l -> l.getCode().equals(lotCodeOfMovement))
+			Optional<Lot> optLot = movStockInsertingManager.getLotByMedical(medical, false).stream().filter(l -> l.getCode().equals(lotCodeOfMovement))
 							.findFirst();
-			double mainStoreQty = lot.get().getMainStoreQuantity();
+			double mainStoreQty = optLot.get().getMainStoreQuantity();
 
 			// Search for the specific Lot and Medical in inventoryRowSearchList (Lot should be enough)
 			Optional<MedicalInventoryRow> matchingRow = inventoryRowList.stream()
@@ -499,7 +508,7 @@ public class MedicalInventoryManager {
 				// TODO: to decide if to give control to the user about this
 				double realQty = mainStoreQty;
 				MedicalInventoryRow newMedicalInventoryRow = new MedicalInventoryRow(null, mainStoreQty, realQty, inventory, medical,
-								mov.getLot());
+								lot);
 				medicalInventoryRowManager.newMedicalInventoryRow(newMedicalInventoryRow);
 			}
 		}
