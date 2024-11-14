@@ -476,7 +476,7 @@ public class MedicalInventoryManager {
 			}
 		}
 		// Get all the lot of the movements
-		List<Lot> lotOfMovements = movs.stream().map(m -> m.getLot()).collect(Collectors.toList());
+		List<Lot> lotOfMovements = movs.stream().map(Movement::getLot).collect(Collectors.toList());
 		// Remove duplicates by converting the list to a set
 		Set<Lot> uniqueLots = new HashSet<>(lotOfMovements);
 		// Convert the set back to a list
