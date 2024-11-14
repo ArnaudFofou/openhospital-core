@@ -284,7 +284,7 @@ class Tests extends OHCoreTestCase {
 		MedicalType medicalType = testMedicalType.setup(false);
 		Medical medical = testMedical.setup(medicalType, false);
 		Lot lot = testLot.setup(medical, false);
-		medicalType = medicalTypeIoOperationRepository.save(medicalType);
+		medicalTypeIoOperationRepository.save(medicalType);
 		medical = medicalsIoOperationRepository.save(medical);
 		lot = lotIoOperationRepository.save(lot);
 		MedicalInventoryRow medicalInventoryRowOne = testMedicalInventoryRow.setup(foundMedicalInventory, medical, lot, false);
@@ -786,7 +786,7 @@ class Tests extends OHCoreTestCase {
 		MedicalStock secondmedicalStock = testMedicalStock.setup(firstMovement);
 		Lot lotThree = testLot.setup(medical, false);
 		lotTwo.setCode("LOT-003");
-		medicalType = medicalTypeIoOperationRepository.save(medicalType);
+		medicalTypeIoOperationRepository.save(medicalType);
 		medical = medicalsIoOperationRepository.save(medical);
 		lotOne = lotIoOperationRepository.save(lotOne);
 		lotTwo = lotIoOperationRepository.save(lotTwo);
