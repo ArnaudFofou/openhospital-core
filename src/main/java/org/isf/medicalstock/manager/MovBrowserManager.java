@@ -22,7 +22,6 @@
 package org.isf.medicalstock.manager;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
 import org.isf.generaldata.MessageBundle;

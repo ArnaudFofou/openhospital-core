@@ -245,10 +245,10 @@ public class MedicalInventoryManager {
 	 *
 	 * @param inventory - The {@link MedicalInventory}
 	 * @param inventoryRowSearchList- The list of {@link MedicalInventory}
-	 * @throws OHDataValidationException, OHServiceException
+	 * @throws OHServiceException
 	 */
 	public void validateMedicalInventoryRow(MedicalInventory inventory, List<MedicalInventoryRow> inventoryRowSearchList)
-					throws OHDataValidationException, OHServiceException {
+					throws OHServiceException {
 		LocalDateTime movFrom = inventory.getInventoryDate();
 		LocalDateTime movTo = TimeTools.getNow();
 		StringBuilder medDescriptionForLotUpdated = new StringBuilder("\n"); // initial new line
@@ -288,11 +288,13 @@ public class MedicalInventoryManager {
 			Medical medical = lot.getMedical();
 			String medicalDesc = medical.getDescription();
 			Integer medicalCode = medical.getCode();
-
+			double mainStoreQty = 0.0;
 			// Fetch also empty lots because some movements may have discharged them completely
 			Optional<Lot> optLot = movStockInsertingManager.getLotByMedical(medical, false).stream().filter(l -> l.getCode().equals(lotCodeOfMovement))
 							.findFirst();
-			double mainStoreQty = optLot.get().getMainStoreQuantity();
+			if (optLot.isPresent()) {
+				mainStoreQty = optLot.get().getMainStoreQuantity();	
+			}
 
 			// Search for the specific Lot and Medical in inventoryRowSearchList (Lot should be enough)
 			Optional<MedicalInventoryRow> matchingRow = inventoryRowSearchList.stream()
