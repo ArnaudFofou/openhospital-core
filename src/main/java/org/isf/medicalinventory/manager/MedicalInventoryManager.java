@@ -275,7 +275,7 @@ public class MedicalInventoryManager {
 			}
 		}
 		// Get all the lot of the movements
-		List<Lot> lotOfMovements = movs.stream().map(m -> m.getLot()).collect(Collectors.toList());
+		List<Lot> lotOfMovements = movs.stream().map(Movement::getLot).collect(Collectors.toList());
 		// Remove duplicates by converting the list to a set
 		Set<Lot> uniqueLots = new HashSet<>(lotOfMovements);
 		// Convert the set back to a list
@@ -440,7 +440,7 @@ public class MedicalInventoryManager {
 		boolean existWithSuffixCharge = movStockInsertingManager.refNoExists(chargeReferenceNumber);
 		boolean existWithSuffixDischarge = movStockInsertingManager.refNoExists(dischargeReferenceNumber);
 		MedicalInventory inventory = this.getInventoryByReference(reference);
-		if (existWithSuffixCharge || existWithSuffixDischarge || (inventory != null && inventory.getId() != medicalInventory.getId())) {
+		if (existWithSuffixCharge || existWithSuffixDischarge || inventory != null && inventory.getId() != medicalInventory.getId()) {
 			errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.inventory.referencealreadyused.msg")));
 		}
 		if (!errors.isEmpty()) {
@@ -478,7 +478,7 @@ public class MedicalInventoryManager {
 			}
 		}
 		// Get all the lot of the movements
-		List<Lot> lotOfMovements = movs.stream().map(m -> m.getLot()).collect(Collectors.toList());
+		List<Lot> lotOfMovements = movs.stream().map(Movement::getLot).collect(Collectors.toList());
 		// Remove duplicates by converting the list to a set
 		Set<Lot> uniqueLots = new HashSet<>(lotOfMovements);
 		// Convert the set back to a list
