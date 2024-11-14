@@ -386,11 +386,9 @@ public class MedicalInventoryManager {
 	 */
 	@Transactional(rollbackFor = OHServiceException.class)
 	public List<Movement> confirmMedicalInventoryRow(MedicalInventory inventory, List<MedicalInventoryRow> inventoryRowSearchList) throws OHServiceException {
-		// here for updating lock field
-		int id = inventory.getId();
-		inventory = this.getInventoryById(id);
 		// validate the inventory
 		this.validateMedicalInventoryRow(inventory, inventoryRowSearchList);
+		
 		// get general info
 		String referenceNumber = inventory.getInventoryReference();
 		// TODO: to explore the possibility to allow charges and discharges with same referenceNumber
