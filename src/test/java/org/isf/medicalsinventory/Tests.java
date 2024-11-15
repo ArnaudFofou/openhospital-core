@@ -183,7 +183,7 @@ class Tests extends OHCoreTestCase {
 		medicalInventory.setInventoryReference(inventoryReference);
 		assertThat(medicalInventory.getInventoryReference()).isEqualTo(inventoryReference);
 
-		String inventoryType = "type";
+		String inventoryType = InventoryType.main.toString();
 		medicalInventory.setInventoryType(inventoryType);
 		assertThat(medicalInventory.getInventoryType()).isEqualTo(inventoryType);
 
@@ -259,7 +259,7 @@ class Tests extends OHCoreTestCase {
 		Integer id = setupTestMedicalInventory();
 		MedicalInventory foundMedicalInventory = medIvnIoOperationRepository.findById(id).orElse(null);
 		assertThat(foundMedicalInventory).isNotNull();
-		String status = "canceled";
+		String status = InventoryStatus.canceled.toString();
 		foundMedicalInventory.setStatus(status);
 		MedicalInventory updatedMedicalInventory = medicalInventoryManager.updateMedicalInventory(foundMedicalInventory, true);
 		assertThat(updatedMedicalInventory.getStatus()).isEqualTo(status);
@@ -363,7 +363,7 @@ class Tests extends OHCoreTestCase {
 		int idInventory = 2;
 		inventory.setId(idInventory);
 		String wardCode = "P";
-		String status = "validated";
+		String status = InventoryStatus.validated.toString();
 		inventory.setWard(wardCode);
 		inventory.setStatus(status);
 		MedicalInventory secondMedicalInventory = medIvnIoOperationRepository.saveAndFlush(inventory);
@@ -385,7 +385,7 @@ class Tests extends OHCoreTestCase {
 		int idInventory = 2;
 		inventory.setId(idInventory);
 		String wardCode = "P";
-		String status = "validated";
+		String status = InventoryStatus.validated.toString();
 		inventory.setWard(wardCode);
 		inventory.setStatus(status);
 		MedicalInventory secondMedicalInventory = medIvnIoOperationRepository.saveAndFlush(inventory);
@@ -407,7 +407,7 @@ class Tests extends OHCoreTestCase {
 		int idInventory = 2;
 		inventory.setId(idInventory);
 		String wardCode = "P";
-		String status = "validated";
+		String status = InventoryStatus.validated.toString();
 		inventory.setWard(wardCode);
 		inventory.setStatus(status);
 		MedicalInventory secondMedicalInventory = medIvnIoOperationRepository.saveAndFlush(inventory);
@@ -429,7 +429,7 @@ class Tests extends OHCoreTestCase {
 		int idInventory = 2;
 		inventory.setId(idInventory);
 		String wardCode = "P";
-		String status = "validated";
+		String status = InventoryStatus.validated.toString();
 		inventory.setWard(wardCode);
 		inventory.setStatus(status);
 		MedicalInventory secondMedicalInventory = medIvnIoOperationRepository.saveAndFlush(inventory);
@@ -453,7 +453,7 @@ class Tests extends OHCoreTestCase {
 		int idInventory = 2;
 		inventory.setId(idInventory);
 		String wardCode = "P";
-		String status = "validated";
+		String status = InventoryStatus.validated.toString();
 		inventory.setWard(wardCode);
 		inventory.setStatus(status);
 		MedicalInventory secondMedicalInventory = medIvnIoOperationRepository.saveAndFlush(inventory);
@@ -476,7 +476,7 @@ class Tests extends OHCoreTestCase {
 		int idInventory = 2;
 		inventory.setId(idInventory);
 		String wardCode = "P";
-		String status = "validated";
+		String status = InventoryStatus.validated.toString();
 		inventory.setWard(wardCode);
 		inventory.setStatus(status);
 		MedicalInventory secondMedicalInventory = medIvnIoOperationRepository.saveAndFlush(inventory);
