@@ -382,7 +382,7 @@ public class MedicalInventoryManager {
 	 * @param inventory - The {@link MedicalInventory}
 	 * @param inventoryRowSearchList- The list of {@link MedicalInventory}
 	 * @return List {@link Movement}. It could be {@code empty}.
-	 * @throws OHDataValidationException
+	 * @throws OHServiceException
 	 */
 	@Transactional(rollbackFor = OHServiceException.class)
 	public List<Movement> confirmMedicalInventoryRow(MedicalInventory inventory, List<MedicalInventoryRow> inventoryRowSearchList) throws OHServiceException {
@@ -451,7 +451,7 @@ public class MedicalInventoryManager {
 	 *
 	 * @param inventory - The {@link MedicalInventory}
 	 * @return {@link MedicalInventory}. It could be {@code null}.
-	 * @throws OHDataValidationException
+	 * @throws OHServiceException
 	 */
 	public MedicalInventory actualizeMedicalInventoryRow(MedicalInventory inventory) throws OHServiceException {
 		LocalDateTime movFrom = inventory.getInventoryDate();
