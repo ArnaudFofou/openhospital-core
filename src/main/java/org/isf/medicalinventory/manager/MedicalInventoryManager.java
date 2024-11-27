@@ -533,6 +533,7 @@ public class MedicalInventoryManager {
 	 * draft,
 	 * done,
 	 * canceled,
+	 * validated
 	 *
 	 * @return
 	 */
@@ -545,6 +546,11 @@ public class MedicalInventoryManager {
 		return statusList;
 	}
 	
+	/**
+	 * Return a value of the key on statusHashMap.
+	 * @param key - the key of status
+	 * @return the value of the key or empty string if key is not on statusHashMap.
+	 */
 	public String getStatusByKey(String key) {
 		if (statusHashMap == null) {
 			buildStatusHashMap();
