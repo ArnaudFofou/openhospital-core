@@ -75,7 +75,7 @@ public class MedicalInventoryManager {
 
 	private WardBrowserManager wardManager;
 	
-	protected HashMap<String, String> statusHashMap;
+	protected Map<String, String> statusHashMap;
 
 	public MedicalInventoryManager(MedicalInventoryIoOperation medicalInventoryIoOperation, MedicalInventoryRowManager medicalInventoryRowManager,
 					MedicalDsrStockMovementTypeBrowserManager medicalDsrStockMovementTypeBrowserManager,
