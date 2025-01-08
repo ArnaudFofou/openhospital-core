@@ -28,8 +28,6 @@ import java.util.Map;
 
 import org.isf.utils.db.DbSingleJpaConn;
 import org.isf.utils.exception.OHException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -39,9 +37,6 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.util.JRLoader;
 
 public class PrintLabels {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(PrintLabels.class);
-
 	public PrintLabels(String filename, Integer patId) throws OHException, JRException {
 		Map<String, Object> parameters = new HashMap<>();
 
