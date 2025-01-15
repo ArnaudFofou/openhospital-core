@@ -536,6 +536,39 @@ public class MedicalInventoryManager {
 		this.updateMedicalInventory(inventory, false);
 		return insertedMovements;
 	}
+	
+	/**
+	 * Confirm the Inventory rows of ward inventory.
+	 *
+	 * @param inventory the {@link MedicalInventory}
+	 * @param inventoryRowSearchList- The list of {@link MedicalInventory}
+	 * @return List {@link Movement}. It could be {@code empty}.
+	 * @throws OHServiceException
+	 */
+	@Transactional(rollbackFor = OHServiceException.class)
+	public boolean confirmMedicalWardInventoryRow(MedicalInventory inventory, List<MedicalInventoryRow> inventoryRowSearchList) throws OHServiceException {
+		// validate the inventory
+		this.validateMedicalWardInventoryRow(inventory, inventoryRowSearchList);
+
+		// get general info
+		Ward selectedWard = wardManager.findWard(inventory.getWard());
+		LocalDateTime now = TimeTools.getNow();
+		String reason = "Inventory";
+		for (MedicalInventoryRow medicalInventoryRow : inventoryRowSearchList) {
+			double theoQty = medicalInventoryRow.getTheoreticQty();
+			double realQty = medicalInventoryRow.getRealQty();
+			Double movQuantity = theoQty - realQty;
+			Medical medical = medicalInventoryRow.getMedical();
+			Lot currentLot = medicalInventoryRow.getLot();
+			movStockInsertingManager.storeLot(currentLot.getCode(), currentLot, medical);
+			movWardBrowserManager.newMovementWard(new MovementWard(selectedWard, now, false, null, 0, 0, reason, medical, movQuantity,
+							MessageBundle.getMessage("angal.medicalstockward.rectify.pieces"), currentLot));
+		}
+		String status = InventoryStatus.done.toString();
+		inventory.setStatus(status);
+		this.updateMedicalInventory(inventory, false);
+		return true;
+	}
 
 	private void checkReference(MedicalInventory medicalInventory) throws OHServiceException {
 		List<OHExceptionMessage> errors = new ArrayList<>();
