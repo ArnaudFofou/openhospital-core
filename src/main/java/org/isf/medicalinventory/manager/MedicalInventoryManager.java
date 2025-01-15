@@ -553,14 +553,13 @@ public class MedicalInventoryManager {
 		// get general info
 		Ward selectedWard = wardManager.findWard(inventory.getWard());
 		LocalDateTime now = TimeTools.getNow();
-		String reason = "Inventory";
+		String reason = "Inventory - "+inventory.getInventoryReference();
 		for (MedicalInventoryRow medicalInventoryRow : inventoryRowSearchList) {
 			double theoQty = medicalInventoryRow.getTheoreticQty();
 			double realQty = medicalInventoryRow.getRealQty();
 			Double movQuantity = theoQty - realQty;
 			Medical medical = medicalInventoryRow.getMedical();
 			Lot currentLot = medicalInventoryRow.getLot();
-			movStockInsertingManager.storeLot(currentLot.getCode(), currentLot, medical);
 			movWardBrowserManager.newMovementWard(new MovementWard(selectedWard, now, false, null, 0, 0, reason, medical, movQuantity,
 							MessageBundle.getMessage("angal.medicalstockward.rectify.pieces"), currentLot));
 		}
