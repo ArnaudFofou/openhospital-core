@@ -553,7 +553,7 @@ public class MedicalInventoryManager {
 		// get general info
 		Ward selectedWard = wardManager.findWard(inventory.getWard());
 		LocalDateTime now = TimeTools.getNow();
-		String reason = "Inventory - "+inventory.getInventoryReference();
+		String reason = MessageBundle.getMessage("angal.inventory.reason.msg").concat(inventory.getInventoryReference());
 		for (MedicalInventoryRow medicalInventoryRow : inventoryRowSearchList) {
 			double theoQty = medicalInventoryRow.getTheoreticQty();
 			double realQty = medicalInventoryRow.getRealQty();
