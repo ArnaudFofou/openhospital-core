@@ -560,8 +560,10 @@ public class MedicalInventoryManager {
 			Double movQuantity = theoQty - realQty;
 			Medical medical = medicalInventoryRow.getMedical();
 			Lot currentLot = medicalInventoryRow.getLot();
-			movWardBrowserManager.newMovementWard(new MovementWard(selectedWard, now, false, null, 0, 0, reason, medical, movQuantity,
-							MessageBundle.getMessage("angal.medicalstockward.rectify.pieces"), currentLot));
+			if (movQuantity != 0) {
+				movWardBrowserManager.newMovementWard(new MovementWard(selectedWard, now, false, null, 0, 0, reason, medical, movQuantity,
+								MessageBundle.getMessage("angal.medicalstockward.rectify.pieces"), currentLot));
+			}
 		}
 		String status = InventoryStatus.done.toString();
 		inventory.setStatus(status);
